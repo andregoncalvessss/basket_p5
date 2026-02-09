@@ -13,7 +13,6 @@ function setup() {
   microfone.start();
   bola = new Bola();
   cesto = new Cesto();
-  textSize(20);
 }
 
 function draw() {
@@ -28,8 +27,6 @@ function draw() {
 
 function jogar() {
   desenharInterface();
-
-  // Lógica do Tempo: Subtrai o tempo real que passou
   if (tempoRestante > 0) {
     tempoRestante -= deltaTime / 1000;
   } else {
@@ -39,9 +36,7 @@ function jogar() {
 
   cesto.mover();
   cesto.desenhar();
-
-  let volume = microfone.getLevel();
-  bola.atualizar(mouseX, volume);
+  bola.atualizar(mouseX, microfone.getLevel());
   bola.desenhar();
 
   if (bola.verificarColisao(cesto)) {
@@ -51,22 +46,22 @@ function jogar() {
 }
 
 function ecraRepetir() {
-  background(0, 0, 0, 180);
+  background(0, 0, 0, 200);
   fill(255);
-  textAlign(CENTER);
+  textAlign(CENTER, CENTER);
   textSize(40);
   text("FIM DE JOGO", width / 2, height / 2 - 50);
   textSize(25);
   text("Pontuação Final: " + pontos, width / 2, height / 2);
+  textSize(20);
   text("Clica no rato para Reiniciar", width / 2, height / 2 + 60);
 }
 
 function mousePressed() {
-  userStartAudio(); // Necessário para o mic em alguns browsers
-
+  userStartAudio();
   if (estadoJogo === 2) {
     pontos = 0;
-    tempoRestante = 30; // Reset forçado do tempo
+    tempoRestante = 30;
     bola.resetar();
     estadoJogo = 1;
   }
@@ -75,16 +70,20 @@ function mousePressed() {
 function desenharInterface() {
   fill(0);
   noStroke();
-  textAlign(RIGHT);
-  textSize(16);
-  text("ANDRÉ GONÇALVES | Nº 29892 | ECGM", width - 20, 30);
+  
+  // Canto Superior Esquerdo: Tempo e Pontos
+  textAlign(LEFT);
+  textSize(22);
+  text("TEMPO: " + ceil(tempoRestante) + "s", 20, 40);
+  text("PONTOS: " + pontos, 20, 70);
 
+  // Canto Superior Direito: Nome do Aluno
+  textAlign(RIGHT);
+  textSize(14);
+  text("ANDRÉ GONÇALVES| ECGM | Nº29892", width - 20, 30);
+
+  // Canto Inferior Esquerdo: Nome do Desporto (Inglês)
   textAlign(LEFT);
   textSize(24);
   text("BASKETBALL", 20, height - 20);
-
-  textAlign(CENTER);
-  text("Tempo: " + ceil(tempoRestante), width / 2, 30);
-  text("Pontos: " + pontos, width / 2, 60);
 }
-
