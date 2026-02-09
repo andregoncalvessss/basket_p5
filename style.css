@@ -1,11 +1,15 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Remove barras de scroll */
-  background-color: #f0f0f0; /* Cor de fundo da página (atrás do jogo) */
+  overflow: hidden;
+  background-color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 canvas {
   display: block;
-  margin: 0 auto; /* Tenta centrar se o ecrã for muito grande */
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }

@@ -1,11 +1,6 @@
-let microfone;
-let bola;
-let cesto;
+let microfone, bola, cesto, imagemFundo;
 let estadoJogo = 1;
 let pontos = 0;
-let imagemFundo;
-
-// MUDANÇA: Uma variável simples que guarda os segundos que faltam
 let tempoRestante = 30;
 
 function preload() {
@@ -14,13 +9,10 @@ function preload() {
 
 function setup() {
   createCanvas(800, 600);
-
   microfone = new p5.AudioIn();
   microfone.start();
-
   bola = new Bola();
   cesto = new Cesto();
-
   textSize(20);
 }
 
@@ -37,12 +29,10 @@ function draw() {
 function jogar() {
   desenharInterface();
 
-  // LÓGICA DO TEMPO (A SOLUÇÃO)
-  // deltaTime conta o tempo entre cada frame. Dividimos por 1000 para ter segundos.
+  // Lógica do Tempo: Subtrai o tempo real que passou
   if (tempoRestante > 0) {
     tempoRestante -= deltaTime / 1000;
   } else {
-    // Se o tempo for menor que 0, acaba o jogo
     tempoRestante = 0;
     estadoJogo = 2;
   }
@@ -61,35 +51,23 @@ function jogar() {
 }
 
 function ecraRepetir() {
-  background(0, 0, 0, 150);
+  background(0, 0, 0, 180);
   fill(255);
   textAlign(CENTER);
-  
   textSize(40);
   text("FIM DE JOGO", width / 2, height / 2 - 50);
-
   textSize(25);
   text("Pontuação Final: " + pontos, width / 2, height / 2);
   text("Clica no rato para Reiniciar", width / 2, height / 2 + 60);
 }
 
-// ESTA FUNÇÃO RESOLVE O TEU PROBLEMA
 function mousePressed() {
-  // O 'userStartAudio' é obrigatório no Chrome para o mic funcionar
-  userStartAudio();
+  userStartAudio(); // Necessário para o mic em alguns browsers
 
   if (estadoJogo === 2) {
-    // 1. Resetar Pontos
     pontos = 0;
-    
-    // 2. Resetar a Bola
+    tempoRestante = 30; // Reset forçado do tempo
     bola.resetar();
-    
-    // 3. FORÇAR O TEMPO PARA 30 SEGUNDOS
-    // Como estamos a definir o valor diretamente, ele não pode ser negativo
-    tempoRestante = 30; 
-    
-    // 4. Voltar ao jogo
     estadoJogo = 1;
   }
 }
@@ -99,67 +77,55 @@ function desenharInterface() {
   noStroke();
   textAlign(RIGHT);
   textSize(16);
-  text("ANDRÉ GONÇALVES", width - 20, 30);
-  text("Nº 29892", width - 20, 50);
-  text("ECGM", width - 20, 70);
+  text("ANDRÉ GONÇALVES | Nº 29892 | ECGM", width - 20, 30);
 
   textAlign(LEFT);
   textSize(24);
   text("BASKETBALL", 20, height - 20);
 
   textAlign(CENTER);
-  
-  // Arredondamos o número para não mostrar casas decimais (ex: 29.999)
-  let tempoFormatado = int(tempoRestante);
-  
-  text("Tempo: " + tempoFormatado, width / 2, 30);
+  text("Tempo: " + ceil(tempoRestante), width / 2, 30);
   text("Pontos: " + pontos, width / 2, 60);
 }
 
-/* --- CLASSES (BOLA E CESTO) --- */
+/* --- CLASSES --- */
 
 class Bola {
   constructor() {
     this.tamanho = 30;
-    this.x = width / 2;
-    this.y = height - 50;
-    this.lancada = false;
-    this.velocidadeY = 0;
+    this.resetar();
   }
 
   atualizar(posicaoRatoX, volumeMic) {
-    if (this.lancada == false) {
+    if (!this.lancada) {
       this.x = posicaoRatoX;
       this.y = height - 50;
       if (volumeMic > 0.1) {
         this.lancada = true;
-        this.velocidadeY = -10;
+        this.velocidadeY = -12;
       }
     } else {
       this.y += this.velocidadeY;
-      if (this.y < 0) {
-        this.resetar();
-      }
+      if (this.y < 0) this.resetar();
     }
   }
 
   desenhar() {
     fill(255, 100, 0);
     stroke(0);
+    strokeWeight(1);
     circle(this.x, this.y, this.tamanho);
   }
 
   resetar() {
     this.lancada = false;
     this.y = height - 50;
+    this.velocidadeY = 0;
   }
 
   verificarColisao(objetoCesto) {
-    let distancia = dist(this.x, this.y, objetoCesto.x, objetoCesto.y + 40);
-    if (distancia < 35) {
-      return true;
-    }
-    return false;
+    // Verifica se a bola está perto do centro da rede
+    return dist(this.x, this.y, objetoCesto.x, objetoCesto.y + 40) < 35;
   }
 }
 
@@ -172,10 +138,14 @@ class Cesto {
 
   mover() {
     this.x += this.velocidade;
-    if (this.x > width - 60 || this.x < 60) {
+
+    // CORREÇÃO: Reposiciona o cesto na borda para não encravar
+    if (this.x > width - 60) {
       this.velocidade *= -1;
-      if (this.velocidade > 0) this.velocidade = random(2, 6);
-      else this.velocidade = random(-6, -2);
+      this.x = width - 60; // Força a saída da borda
+    } else if (this.x < 60) {
+      this.velocidade *= -1;
+      this.x = 60; // Força a saída da borda
     }
   }
 
@@ -184,23 +154,26 @@ class Cesto {
     fill(255);
     stroke(0);
     strokeWeight(2);
+    // Tabela
     rect(this.x, this.y, 120, 90);
+    
+    // Aro/Rede
     noFill();
     stroke(255, 0, 0);
     strokeWeight(3);
     rect(this.x, this.y + 15, 50, 40);
-    stroke(255);
+    
+    // Detalhes da rede
+    stroke(200); 
     strokeWeight(1);
     line(this.x - 20, this.y + 40, this.x - 15, this.y + 75);
     line(this.x + 20, this.y + 40, this.x + 15, this.y + 75);
-    line(this.x - 7, this.y + 40, this.x - 5, this.y + 75);
-    line(this.x + 7, this.y + 40, this.x + 5, this.y + 75);
     line(this.x - 18, this.y + 50, this.x + 18, this.y + 50);
-    line(this.x - 12, this.y + 65, this.x + 12, this.y + 65);
+    
+    // Borda do cesto
     stroke(255, 100, 0);
     strokeWeight(5);
     line(this.x - 30, this.y + 40, this.x + 30, this.y + 40);
     strokeWeight(1);
-    stroke(0);
   }
 }
