@@ -11,7 +11,7 @@ class Bola {
       this.y = height - 80;
 
       // Se fizer barulho, lança a bola
-      if (volumeMic > 0.1) {
+      if (volumeMic > 0.05) {
         this.lancada = true;
         this.velocidadeY = -12;
         if (somLigado) somLancamento.play(); // Toca o som se estiver ligado
