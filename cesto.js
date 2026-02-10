@@ -20,13 +20,13 @@ class Cesto {
     push();
     rectMode(CENTER);
     
-    // Tabela branca
+    
     fill(255);
     stroke(0);
     strokeWeight(2);
     rect(this.x, this.y, 120, 90);
     
-    // REDE A PRETO (Conforme pedido)
+  
     stroke(0);
     strokeWeight(1);
     for (let i = -20; i <= 20; i += 10) {
@@ -35,12 +35,12 @@ class Cesto {
     line(this.x - 18, this.y + 55, this.x + 18, this.y + 55);
     line(this.x - 15, this.y + 70, this.x + 15, this.y + 70);
     
-    // Aro Laranja
+  
     stroke(255, 100, 0);
     strokeWeight(5);
     line(this.x - 30, this.y + 40, this.x + 30, this.y + 40);
     
-    // Quadrado de alvo vermelho na tabela
+    
     noFill();
     stroke(255, 0, 0);
     strokeWeight(2);

@@ -12,7 +12,7 @@ class PowerUp {
 
   desenhar() {
     textSize(35);
-    textAlign(CENTER, CENTER); // Garante que o emoji está centrado para a colisão
+    textAlign(CENTER, CENTER); 
     text(this.tipo, this.x, this.y);
   }
 }

@@ -1,29 +1,27 @@
 class Bola {
   constructor() {
     this.tamanho = 30;
-    this.resetar();
+    this.resetar(); // Define as variáveis iniciais
   }
 
   atualizar(posicaoRatoX, volumeMic) {
-    // Só movemos a bola se ela ainda não tiver sido lançada
+    // Se a bola ainda não foi lançada
     if (this.lancada == false) {
-      
-      // Limita o X entre 15 e 785
-      this.x = constrain(posicaoRatoX, 15, 785);
-      
-      // --- MUDANÇA: A bola agora fica mais acima (era height - 50) ---
-      this.y = height - 80; 
+      this.x = constrain(posicaoRatoX, 15, 785); // Segue o rato (dentro dos limites)
+      this.y = height - 80;
 
-      // Lançar a bola com o som
+      // Se fizer barulho, lança a bola
       if (volumeMic > 0.1) {
         this.lancada = true;
         this.velocidadeY = -12;
+        if (somLigado) somLancamento.play(); // Toca o som se estiver ligado
       }
-    } else {
-      // Movimento vertical após o lançamento
-      this.y += this.velocidadeY;
+    } 
+    // Se a bola já foi lançada
+    else {
+      this.y += this.velocidadeY; // A bola sobe
       
-      // Se a bola sair por cima, volta para baixo
+      // Se sair do ecrã por cima, volta ao início
       if (this.y < 0) {
         this.resetar();
       }
@@ -32,18 +30,15 @@ class Bola {
 
   desenhar() {
     push();
-    fill(255, 100, 0); 
-    stroke(0);
-    strokeWeight(1.5);
-    circle(this.x, this.y, this.tamanho);
+    fill(255, 100, 0); stroke(0); strokeWeight(1.5);
+    circle(this.x, this.y, this.tamanho); // Desenha a bola
 
-    // Riscas pretas
+    // Desenha as linhas pretas da bola
     strokeWeight(1);
-    line(this.x - 15, this.y, this.x + 15, this.y); // Linha Horizontal
-    line(this.x, this.y - 15, this.x, this.y + 15); // Linha Vertical
+    line(this.x - 15, this.y, this.x + 15, this.y); 
+    line(this.x, this.y - 15, this.x, this.y + 15); 
 
     noFill();
-    // Curvas laterais para parecer 3D
     arc(this.x - 21, this.y, 30, 30, -0.6, 0.6); 
     arc(this.x + 21, this.y, 30, 30, PI - 0.6, PI + 0.6);
     pop();
@@ -51,13 +46,12 @@ class Bola {
 
   resetar() {
     this.lancada = false;
-    // --- MUDANÇA: Reset também para a nova altura ---
-    this.y = height - 80; 
+    this.y = height - 80;
     this.velocidadeY = 0;
   }
 
-  verificarColisao(objetoCesto) {
-    // Verifica a distância entre a bola e a rede
-    return dist(this.x, this.y, objetoCesto.x, objetoCesto.y + 40) < 35;
+  verificarColisao(cesto) {
+    // Vê se a bola tocou perto do cesto
+    return dist(this.x, this.y, cesto.x, cesto.y + 40) < 35;
   }
 }
