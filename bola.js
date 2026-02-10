@@ -8,11 +8,11 @@ class Bola {
     // Só movemos a bola se ela ainda não tiver sido lançada
     if (this.lancada == false) {
       
-      // Limita o X entre 15 e 785 (metade da bola para cada lado em 800px)
-      // Se o rato sair da janela, a bola "tranca" na borda
+      // Limita o X entre 15 e 785
       this.x = constrain(posicaoRatoX, 15, 785);
       
-      this.y = height - 50;
+      // --- MUDANÇA: A bola agora fica mais acima (era height - 50) ---
+      this.y = height - 80; 
 
       // Lançar a bola com o som
       if (volumeMic > 0.1) {
@@ -37,7 +37,7 @@ class Bola {
     strokeWeight(1.5);
     circle(this.x, this.y, this.tamanho);
 
-    // Riscas pretas (conforme a imagem que enviaste)
+    // Riscas pretas
     strokeWeight(1);
     line(this.x - 15, this.y, this.x + 15, this.y); // Linha Horizontal
     line(this.x, this.y - 15, this.x, this.y + 15); // Linha Vertical
@@ -51,7 +51,8 @@ class Bola {
 
   resetar() {
     this.lancada = false;
-    this.y = height - 50;
+    // --- MUDANÇA: Reset também para a nova altura ---
+    this.y = height - 80; 
     this.velocidadeY = 0;
   }
 
